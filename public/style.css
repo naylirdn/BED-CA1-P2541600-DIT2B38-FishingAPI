@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #e8f7ff;
+    margin: 0;
+    padding: 30px;
+    color: #1f2937;
+}
+
+h1 {
+    text-align: center;
+    color: #0369a1;
+}
+
+section {
+    background: white;
+    padding: 18px;
+    margin: 18px auto;
+    max-width: 650px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+input,
+select,
+button {
+    padding: 10px;
+    margin: 6px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+}
+
+button {
+    background: #0284c7;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0369a1;
+}
+
+pre,
+#fishList,
+#inventory {
+    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+}

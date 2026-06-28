@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fishing Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Fishing Adventure</h1>
+
+    <section>
+        <h2>Create User</h2>
+        <input id="username" placeholder="Username">
+        <input id="password" placeholder="Password" type="password">
+        <button onclick="createUser()">Create User</button>
+    </section>
+
+    <section>
+        <h2>Current User ID</h2>
+        <input id="userId" placeholder="Paste user_id here">
+    </section>
+
+    <section>
+        <h2>Fish List</h2>
+        <button onclick="getFish()">View Fish</button>
+        <div id="fishList"></div>
+    </section>
+
+    <section>
+        <h2>Catch Fish</h2>
+        <select id="spot">
+            <option value="pond">Pond</option>
+            <option value="sea">Sea</option>
+            <option value="river">River</option>
+            <option value="deep_ocean">Deep Ocean</option>
+        </select>
+        <button onclick="catchFish()">Catch Fish</button>
+    </section>
+
+    <section>
+        <h2>Inventory</h2>
+        <button onclick="getInventory()">View Inventory</button>
+        <div id="inventory"></div>
+    </section>
+
+    <section>
+        <h2>Sell Fish</h2>
+        <input id="fishId" placeholder="fish_id e.g. fish_tuna">
+        <input id="quantity" type="number" placeholder="Quantity">
+        <button onclick="sellFish()">Sell Fish</button>
+    </section>
+
+    <section>
+        <h2>Result</h2>
+        <pre id="result"></pre>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
