@@ -1,60 +1,459 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Fishing Adventure</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Adventure 🎣</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Fishing Adventure</h1>
 
-    <section>
-        <h2>Create User</h2>
-        <input id="username" placeholder="Username">
-        <input id="password" placeholder="Password" type="password">
-        <button onclick="createUser()">Create User</button>
-    </section>
+    <!-- ── Floating background bubbles (CSS animated) ── -->
+    <div class="bg-bubbles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
 
-    <section>
-        <h2>Current User ID</h2>
-        <input id="userId" placeholder="Paste user_id here">
-    </section>
+    <!-- ── Decorative background fish (login scene) ── -->
+    <div class="bg-fish-layer" aria-hidden="true">
+        <span class="bgf bgf-1">🐠</span>
+        <span class="bgf bgf-2">🐡</span>
+        <span class="bgf bgf-3">🐟</span>
+        <span class="bgf bgf-4">🦈</span>
+        <span class="bgf bgf-5">🐙</span>
+        <span class="bgf bgf-6">🐠</span>
+    </div>
 
-    <section>
-        <h2>Fish List</h2>
-        <button onclick="getFish()">View Fish</button>
-        <div id="fishList"></div>
-    </section>
+    <!-- ── Global Navigation Bar (hidden until logged in) ── -->
+    <nav id="navbar" class="navbar hidden" role="navigation" aria-label="Game navigation">
+        <div class="nav-left">
+            <span class="nav-logo">🎣 Fishing Adventure</span>
+        </div>
+        <div class="nav-center">
+            <span class="nav-mission-label" id="nav-mission-text">No active mission</span>
+        </div>
+        <div class="nav-right">
+            <span class="nav-rod-badge" id="nav-rod">🎣 Twig Rod</span>
+            <span class="nav-coins" id="nav-coins">🪙 0</span>
+        </div>
+    </nav>
 
-    <section>
-        <h2>Catch Fish</h2>
-        <select id="spot">
-            <option value="pond">Pond</option>
-            <option value="sea">Sea</option>
-            <option value="river">River</option>
-            <option value="deep_ocean">Deep Ocean</option>
-        </select>
-        <button onclick="catchFish()">Catch Fish</button>
-    </section>
+    <!-- ── Toast notification ── -->
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <section>
-        <h2>Inventory</h2>
-        <button onclick="getInventory()">View Inventory</button>
-        <div id="inventory"></div>
-    </section>
+    <!-- ── App root — all screens injected here ── -->
+    <main id="app"></main>
 
-    <section>
-        <h2>Sell Fish</h2>
-        <input id="fishId" placeholder="fish_id e.g. fish_tuna">
-        <input id="quantity" type="number" placeholder="Quantity">
-        <button onclick="sellFish()">Sell Fish</button>
-    </section>
+    <!-- ═══════════════════════════════════════════════
+         SCREEN TEMPLATES  (display:none, cloned by JS)
+    ═══════════════════════════════════════════════ -->
 
-    <section>
-        <h2>Result</h2>
-        <pre id="result"></pre>
-    </section>
+    <!-- ── Login Screen ── -->
+    <template id="tpl-login">
+        <section class="screen screen-login" aria-label="Login">
+
+            <!-- Layered underwater scene -->
+            <div class="login-scene" aria-hidden="true">
+                <div class="sun-rays">
+                    <span class="ray ray-1"></span>
+                    <span class="ray ray-2"></span>
+                    <span class="ray ray-3"></span>
+                    <span class="ray ray-4"></span>
+                    <span class="ray ray-5"></span>
+                </div>
+                <div class="coral-floor">
+                    <span class="coral c1">🪸</span>
+                    <span class="coral c2">🌿</span>
+                    <span class="coral c3">🪸</span>
+                    <span class="coral c4">🌿</span>
+                    <span class="coral c5">🪸</span>
+                    <span class="coral c6">🌿</span>
+                    <span class="coral c7">🪸</span>
+                    <span class="coral c8">⭐</span>
+                </div>
+                <div class="seaweed left-weed">
+                    <span class="weed w1">🌿</span>
+                    <span class="weed w2">🌿</span>
+                    <span class="weed w3">🌿</span>
+                </div>
+                <div class="seaweed right-weed">
+                    <span class="weed w1">🌿</span>
+                    <span class="weed w2">🌿</span>
+                    <span class="weed w3">🌿</span>
+                </div>
+                <span class="scene-fish sf-1">🐠</span>
+                <span class="scene-fish sf-2">🐡</span>
+                <span class="scene-fish sf-3">🐟</span>
+                <span class="scene-fish sf-4">🦐</span>
+            </div>
+
+            <!-- The card -->
+            <div class="panel login-panel">
+                <div class="mascot-wrap" aria-hidden="true">
+                    <span class="mascot-bubbles">○ · ○</span>
+                    <span class="mascot-fish">🐠</span>
+                </div>
+                <h1 class="game-title"><span>Fishing</span><span>Adventure!</span></h1>
+                <p class="subtitle">Cast your line into paradise 🎣</p>
+
+                <div class="tab-row">
+                    <button class="tab-btn active" data-tab="login"><span aria-hidden="true">🐟</span> Login</button>
+                    <button class="tab-btn" data-tab="register">Register</button>
+                </div>
+
+                <div id="login-form" class="auth-form">
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+                        <input class="input-field input-icon-pad" id="login-username" type="text" placeholder="Username"
+                            autocomplete="username" aria-label="Username">
+                    </div>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input class="input-field input-icon-pad" id="login-password" type="password"
+                            placeholder="Password" autocomplete="current-password" aria-label="Password">
+                    </div>
+                    <button class="btn-primary btn-login-cta" id="btn-login">🎣 Let's Fish!</button>
+                    <p class="auth-error hidden" id="login-error" role="alert"></p>
+                </div>
+
+                <div id="register-form" class="auth-form hidden">
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+                        <input class="input-field input-icon-pad" id="reg-username" type="text"
+                            placeholder="Choose a username" autocomplete="username" aria-label="New username">
+                    </div>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input class="input-field input-icon-pad" id="reg-password" type="password"
+                            placeholder="Choose a password" autocomplete="new-password" aria-label="New password">
+                    </div>
+                    <button class="btn-primary btn-login-cta" id="btn-register">🌟 Create Account</button>
+                    <p class="auth-error hidden" id="reg-error" role="alert"></p>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Hub Screen ── -->
+    <template id="tpl-hub">
+        <section class="screen screen-hub" aria-label="Main hub">
+            <div class="hub-header">
+                <h2 class="hub-welcome" id="hub-welcome">Welcome back!</h2>
+                <p class="hub-sub">Where are you fishing today?</p>
+            </div>
+            <div class="hub-grid">
+                <button class="hub-card card-fish" data-nav="locations" aria-label="Go fishing">
+                    <span class="hub-card-icon">🎣</span>
+                    <span class="hub-card-label">Fish</span>
+                </button>
+                <button class="hub-card card-shop" data-nav="shop" aria-label="Rod shop">
+                    <span class="hub-card-icon">🏪</span>
+                    <span class="hub-card-label">Rod Shop</span>
+                </button>
+                <button class="hub-card card-inventory" data-nav="inventory" aria-label="Inventory">
+                    <span class="hub-card-icon">🎒</span>
+                    <span class="hub-card-label">Inventory</span>
+                </button>
+                <button class="hub-card card-encyclopedia" data-nav="encyclopedia" aria-label="Fish encyclopedia">
+                    <span class="hub-card-icon">📖</span>
+                    <span class="hub-card-label">Encyclopedia</span>
+                </button>
+                <button class="hub-card card-missions" data-nav="missions" aria-label="Missions">
+                    <span class="hub-card-icon">📋</span>
+                    <span class="hub-card-label">Missions</span>
+                </button>
+                <button class="hub-card card-logout" data-nav="logout" aria-label="Log out">
+                    <span class="hub-card-icon">🚪</span>
+                    <span class="hub-card-label">Logout</span>
+                </button>
+            </div>
+            <div class="hub-wave" aria-hidden="true"></div>
+        </section>
+    </template>
+
+    <!-- ── Location Select Screen ── -->
+    <template id="tpl-locations">
+        <section class="screen screen-locations" aria-label="Choose a fishing location">
+            <button class="btn-back" data-nav="hub" aria-label="Back to hub">← Back</button>
+            <h2 class="screen-title">Choose Your Spot</h2>
+            <div class="locations-grid">
+
+                <button class="location-card loc-pond" data-location="pond" aria-label="Fish at the Pond">
+                    <div class="loc-scene pond-scene" aria-hidden="true">
+                        <span class="loc-tree">🌴</span>
+                        <span class="loc-fish">🐸</span>
+                        <span class="loc-fish delay1">🐟</span>
+                    </div>
+                    <div class="loc-info">
+                        <h3>🪷 Pond</h3>
+                        <p>Calm waters, easy fish</p>
+                        <span class="loc-badge badge-open">Always Open</span>
+                    </div>
+                </button>
+
+                <button class="location-card loc-lake" data-location="lake" aria-label="Fish at the Lake">
+                    <div class="loc-scene lake-scene" aria-hidden="true">
+                        <span class="loc-tree">🌲</span>
+                        <span class="loc-fish">🐠</span>
+                        <span class="loc-fish delay1">🦎</span>
+                    </div>
+                    <div class="loc-info">
+                        <h3>🏔️ Lake</h3>
+                        <p>Deep waters, bigger fish</p>
+                        <span class="loc-badge loc-lake-badge">🔒 Locked</span>
+                    </div>
+                    <div class="loc-lock-overlay" aria-hidden="true">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-hint">Unlock: Steel Rod or Mission 1</span>
+                    </div>
+                </button>
+
+                <button class="location-card loc-sea" data-location="sea" aria-label="Fish at the Sea">
+                    <div class="loc-scene sea-scene" aria-hidden="true">
+                        <span class="loc-tree">⛵</span>
+                        <span class="loc-fish">🦈</span>
+                        <span class="loc-fish delay1">🐙</span>
+                    </div>
+                    <div class="loc-info">
+                        <h3>🌊 Sea</h3>
+                        <p>Dangerous depths, epic rewards</p>
+                        <span class="loc-badge loc-sea-badge">🔒 Locked</span>
+                    </div>
+                    <div class="loc-lock-overlay" aria-hidden="true">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-hint">Unlock: Crystal Rod or Mission 3</span>
+                    </div>
+                </button>
+
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Pond Mini-game: Timing Bar ── -->
+    <template id="tpl-game-pond">
+        <section class="screen screen-minigame screen-pond-game" aria-label="Pond fishing mini-game">
+            <div class="pond-world" aria-hidden="true">
+                <div class="pond-rays"></div>
+                <span class="pond-swimmer fish-one">🐟</span>
+                <span class="pond-swimmer fish-two">🐠</span>
+                <span class="pond-swimmer fish-three">🐡</span>
+                <span class="pond-bubble-cluster bubbles-one">○ · ○</span>
+                <span class="pond-bubble-cluster bubbles-two">○ ○ ·</span>
+                <div class="pond-floor"><span>🌿</span><span>🪨</span><span>🌱</span><span>🐸</span><span>🪷</span><span>🌾</span><span>🪨</span><span>🌿</span></div>
+            </div>
+            <div class="pond-game-panel" id="pond-game-panel">
+                <div class="minigame-header">
+                    <span class="pond-panel-icon" aria-hidden="true">🎣</span>
+                    <h2>🪷 Pond Fishing</h2>
+                    <p class="minigame-hint">Press <kbd>SPACE</kbd> or tap to stop the marker!</p>
+                </div>
+                <div class="timing-bar-wrap" aria-label="Fishing timing skill meter">
+                    <div class="timing-track">
+                        <div class="timing-zone zone-red zone-left" aria-hidden="true"></div>
+                        <div class="timing-zone zone-yellow zone-left2" aria-hidden="true"></div>
+                        <div class="timing-zone zone-green" aria-hidden="true"></div>
+                        <div class="timing-zone zone-yellow zone-right2" aria-hidden="true"></div>
+                        <div class="timing-zone zone-red zone-right" aria-hidden="true"></div>
+                        <div class="timing-marker" id="timing-marker" aria-hidden="true"><i></i></div>
+                    </div>
+                    <div class="timing-legend" aria-hidden="true"><span>Poor</span><span>Good</span><span>Perfect</span><span>Good</span><span>Poor</span></div>
+                </div>
+                <div class="minigame-feedback hidden" id="timing-feedback" aria-live="polite"></div>
+                <button class="btn-cast btn-primary" id="btn-cast-pond" aria-label="Cast or stop">🎣 Cast!</button>
+                <div class="pond-speed-level" id="pond-speed-level">Current: Fresh Cast</div>
+            </div>
+            <div class="pond-deco" aria-hidden="true">
+                🌾 🪷 🐸 · Breathe… aim… cast! · 🐸 🪷 🌾
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Lake Mini-game: Moving Fish Tracker ── -->
+    <template id="tpl-game-lake">
+        <section class="screen screen-minigame screen-lake-game" aria-label="Lake fishing mini-game">
+            <button class="btn-back lake-game-back" data-nav="locations" aria-label="Back to fishing locations">← Back</button>
+            <div class="lake-world" aria-hidden="true">
+                <div class="lake-light-rays"></div>
+                <span class="lake-bg-fish lake-bg-fish-one">🐟</span>
+                <span class="lake-bg-fish lake-bg-fish-two">🐠</span>
+                <span class="lake-bg-fish lake-bg-fish-three">🐡</span>
+                <span class="lake-world-bubbles lake-bubbles-one">○ · ○</span>
+                <span class="lake-world-bubbles lake-bubbles-two">○ ○ ·</span>
+                <div class="lake-bed">🌿　🪨　🪸　🌱　🪵　🌿　🪨　🪷</div>
+            </div>
+            <div class="minigame-header">
+                <h2>🏔️ Lake Fishing</h2>
+                <p class="minigame-hint">Click / tap the fish before it escapes!</p>
+            </div>
+            <div class="lake-attempts-row">
+                <span id="lake-attempts-display">Attempts: ●●●</span>
+                <span id="lake-score-display">Hits: 0 / 3</span>
+            </div>
+            <div class="lake-arena" id="lake-arena" aria-label="Fishing arena — click the fish">
+                <span class="lake-arena-plant plant-left" aria-hidden="true">🌿</span>
+                <span class="lake-arena-plant plant-right" aria-hidden="true">🌱</span>
+                <div class="lake-fish" id="lake-fish" role="button" aria-label="Click this fish" tabindex="0">🐠</div>
+            </div>
+            <div class="lake-feedback" id="lake-feedback" aria-live="polite">Ready your net!</div>
+            <div class="lake-deco" aria-hidden="true">
+                🌊 🪸 🌿 🫧 · Track it carefully! · 🫧 🌿 🪸 🌊
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Sea Mini-game: Line Tension ── -->
+    <template id="tpl-game-sea">
+        <section class="screen screen-minigame screen-sea-game" aria-label="Sea fishing mini-game">
+            <button class="btn-back sea-game-back" data-nav="locations" aria-label="Back to fishing locations">← Back</button>
+            <div class="minigame-header">
+                <h2>🌊 Sea Fishing</h2>
+                <p class="minigame-hint">Hold <kbd>SPACE</kbd> or hold tap to reel — keep the needle in the green!</p>
+            </div>
+            <div class="sea-tension-wrap">
+                <div class="tension-gauge" aria-label="Line tension gauge">
+                    <div class="tension-safe-zone" id="tension-safe-zone" aria-hidden="true"></div>
+                    <div class="tension-needle" id="tension-needle" role="meter" aria-label="Tension" aria-valuenow="50"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="tension-label-wrap" aria-hidden="true">
+                    <span class="tension-label">Slack</span>
+                    <span class="tension-label">SNAP!</span>
+                </div>
+            </div>
+            <div class="sea-phase-info">
+                <span id="sea-phase-label">Phase 1 / 3</span>
+                <div class="sea-phase-bar-wrap">
+                    <div class="sea-phase-bar" id="sea-phase-bar"></div>
+                </div>
+            </div>
+            <div class="sea-deco" aria-hidden="true">
+                ⛈️ 🌊 🌊 ⚡ 🌊 🌊 ⛈️
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Catch Result Screen ── -->
+    <template id="tpl-catch-result">
+        <section class="screen screen-result" aria-label="Catch result">
+            <div class="result-card" id="result-card">
+                <div class="result-splash" id="result-splash" aria-hidden="true">💦</div>
+                <div class="result-special-banner hidden" id="result-special-banner" aria-live="assertive"></div>
+                <div class="result-fish-display" id="result-fish-display" aria-label="Caught fish">
+                    <span class="result-fish-emoji" id="result-fish-emoji">🐟</span>
+                </div>
+                <h2 class="result-fish-name" id="result-fish-name">Minnow</h2>
+                <div class="result-badges">
+                    <span class="rarity-badge" id="result-rarity-badge">Common</span>
+                    <span class="location-badge" id="result-location-badge">Pond</span>
+                </div>
+                <div class="result-stats">
+                    <div class="result-stat">
+                        <span class="result-stat-label">Weight</span>
+                        <span class="result-stat-value" id="result-weight">0.1 kg</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-stat-label">Sell Value</span>
+                        <span class="result-stat-value" id="result-sell-value">🪙 5</span>
+                    </div>
+                </div>
+                <div class="result-actions">
+                    <button class="btn-secondary" id="btn-keep" aria-label="Keep the fish">🎒 Keep</button>
+                    <button class="btn-primary" id="btn-sell" aria-label="Sell the fish">🪙 Sell</button>
+                </div>
+                <button class="btn-text" id="btn-fish-again" aria-label="Fish again at same location">Cast again
+                    →</button>
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Inventory Screen ── -->
+    <template id="tpl-inventory">
+        <section class="screen screen-inventory" aria-label="Inventory">
+            <button class="btn-back" data-nav="hub" aria-label="Back to hub">← Back</button>
+            <h2 class="screen-title">🎒 Inventory</h2>
+            <div class="inventory-summary">
+                <span id="inv-total-value">Total value: 🪙 0</span>
+                <button class="btn-danger btn-sell-all" id="btn-sell-all" aria-label="Sell all fish">Sell All</button>
+            </div>
+            <div class="inventory-grid" id="inventory-grid" aria-live="polite">
+                <!-- Fish cards injected by JS -->
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Rod Shop Screen ── -->
+    <template id="tpl-shop">
+        <section class="screen screen-shop" aria-label="Rod shop">
+            <button class="btn-back" data-nav="hub" aria-label="Back to hub">← Back</button>
+            <h2 class="screen-title">🏪 Rod Shop</h2>
+            <p class="screen-subtitle" id="shop-coins-display">Your coins: 🪙 0</p>
+            <div class="shop-grid" id="shop-grid" aria-live="polite">
+                <!-- Rod cards injected by JS -->
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Missions Screen ── -->
+    <template id="tpl-missions">
+        <section class="screen screen-missions" aria-label="Missions board">
+            <button class="btn-back" data-nav="hub" aria-label="Back to hub">← Back</button>
+            <h2 class="screen-title">📋 Missions</h2>
+            <div class="missions-board" id="missions-board" aria-live="polite">
+                <!-- Mission cards injected by JS -->
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Encyclopedia Screen ── -->
+    <template id="tpl-encyclopedia">
+        <section class="screen screen-encyclopedia" aria-label="Fish encyclopedia">
+            <div class="enc-shell">
+                <button class="btn-back enc-back" data-nav="hub" aria-label="Back to hub">← Back</button>
+                <header class="enc-header">
+                    <div class="enc-title-wrap">
+                        <span class="enc-title-icon" aria-hidden="true">📖</span>
+                        <div>
+                            <p class="enc-kicker">Captain's Collection</p>
+                            <h2 class="screen-title">Encyclopedia</h2>
+                        </div>
+                    </div>
+                    <div class="enc-progress-panel" aria-label="Fish discovery progress">
+                        <div class="enc-progress-copy">
+                            <span id="enc-progress">Discovered: 0 / 20</span>
+                            <span id="enc-progress-percent">0%</span>
+                        </div>
+                        <div class="enc-progress-track" aria-hidden="true">
+                            <div class="enc-progress-fill" id="enc-progress-fill"></div>
+                        </div>
+                    </div>
+                </header>
+                <div class="enc-tab-row" role="tablist" aria-label="Filter fish by habitat">
+                    <button class="tab-btn active" role="tab" aria-selected="true" data-loc="all">🐟 All</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" data-loc="pond">🪷 Pond</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" data-loc="lake">🏞️ Lake</button>
+                    <button class="tab-btn" role="tab" aria-selected="false" data-loc="sea">🌊 Sea</button>
+                </div>
+                <div class="enc-collection-panel">
+                    <div class="enc-grid" id="enc-grid" aria-live="polite">
+                        <!-- Fish cards injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- ── Loading overlay ── -->
+    <div id="loading-overlay" class="loading-overlay hidden" aria-live="polite" aria-label="Loading">
+        <div class="loading-bobber" aria-hidden="true">🎣</div>
+        <p>Reeling in…</p>
+    </div>
 
     <script src="script.js"></script>
 </body>

@@ -1,4 +1,5 @@
 import * as userModel from '../models/userModel.js';
+import * as rodModel from '../models/rodModel.js';
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -53,6 +54,10 @@ export const createUser = async (req, res) => {
         };
 
         const createdUser = await userModel.createUser(newUser);
+
+        // Give every new user the starter Twig Rod, equipped by default
+        await rodModel.giveStarterRod(newUser.user_id);
+
         return res.status(201).json(createdUser);
     } catch (error) {
         console.error('Error creating user:', error);
